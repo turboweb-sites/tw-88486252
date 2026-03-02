@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "npx serve dist -s -l 3000"
+    "start": "npx serve dist -s -l ${PORT:-3000}"
   },
   "dependencies": {
     "react": "^18.3.1",
