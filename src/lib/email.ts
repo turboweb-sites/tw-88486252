@@ -54,11 +54,38 @@ export async function sendBookingConfirmation(data: {
   return sendEmail(data.email, 'Booking Confirmed - Miami Auto Detailing', html);
 }
 
+export async function sendBookingNotification(data: {
+  name: string;
+  phone: string;
+  email: string;
+  vehicleType: string;
+  service: string;
+  preferredDate?: string;
+  preferredTime?: string;
+  notes?: string;
+}) {
+  const html = `
+    <div style="font-family: system-ui; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h2>New Booking Request</h2>
+      <p><strong>Name:</strong> ${data.name}</p>
+      <p><strong>Email:</strong> ${data.email}</p>
+      <p><strong>Phone:</strong> ${data.phone}</p>
+      <p><strong>Service:</strong> ${data.service}</p>
+      <p><strong>Vehicle:</strong> ${data.vehicleType}</p>
+      <p><strong>Date:</strong> ${data.preferredDate || 'N/A'}</p>
+      <p><strong>Time:</strong> ${data.preferredTime || 'N/A'}</p>
+      ${data.notes ? `<p><strong>Notes:</strong> ${data.notes}</p>` : ''}
+    </div>
+  `;
+
+  return sendEmail(BUSINESS_EMAIL, `New Booking: ${data.name} — ${data.service}`, html);
+}
+
 export async function sendContactNotification(data: {
   name: string;
   email: string;
-  phone: string;
-  subject: string;
+  phone?: string;
+  subject?: string;
   message: string;
 }) {
   const html = `
@@ -80,18 +107,23 @@ export async function sendQuoteNotification(data: {
   name: string;
   email: string;
   phone: string;
-  services: string[];
-  vehicleInfo: string;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+  servicesInterested?: string[];
   message?: string;
 }) {
+  const vehicleInfo = [data.vehicleYear, data.vehicleMake, data.vehicleModel].filter(Boolean).join(' ') || 'Not specified';
+  const servicesList = data.servicesInterested?.join(', ') || 'None selected';
+
   const html = `
     <div style="font-family: system-ui; max-width: 600px; margin: 0 auto; padding: 20px;">
       <h2>New Quote Request</h2>
       <p><strong>Name:</strong> ${data.name}</p>
       <p><strong>Email:</strong> ${data.email}</p>
       <p><strong>Phone:</strong> ${data.phone}</p>
-      <p><strong>Services:</strong> ${data.services.join(', ')}</p>
-      <p><strong>Vehicle:</strong> ${data.vehicleInfo}</p>
+      <p><strong>Services:</strong> ${servicesList}</p>
+      <p><strong>Vehicle:</strong> ${vehicleInfo}</p>
       ${data.message ? `<p><strong>Message:</strong> ${data.message}</p>` : ''}
     </div>
   `;

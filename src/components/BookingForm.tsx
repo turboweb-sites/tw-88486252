@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Calendar, CheckCircle, Loader2, Circle } from 'lucide-react';
+import { Calendar, CheckCircle, Loader2, Car } from 'lucide-react';
 import BookingCalendar from './BookingCalendar';
 import { BookingFormData } from '../types';
 import { submitBooking } from '../lib/supabase';

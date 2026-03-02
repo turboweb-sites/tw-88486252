@@ -31,17 +31,23 @@ async function ghlRequest(endpoint: string, method: string, body?: unknown) {
   return response.json();
 }
 
-export async function createGHLContact(contact: GHLContact) {
-  return ghlRequest('/contacts/', 'POST', {
-    firstName: contact.firstName,
-    lastName: contact.lastName || '',
-    email: contact.email,
-    phone: contact.phone || '',
-    locationId: GHL_LOCATION_ID,
-    tags: contact.tags || ['website-lead'],
-    source: contact.source || 'Website',
-    customField: contact.customField || {},
-  });
+export async function createGHLContact(contact: GHLContact): Promise<string | null> {
+  try {
+    const result = await ghlRequest('/contacts/', 'POST', {
+      firstName: contact.firstName,
+      lastName: contact.lastName || '',
+      email: contact.email,
+      phone: contact.phone || '',
+      locationId: GHL_LOCATION_ID,
+      tags: contact.tags || ['website-lead'],
+      source: contact.source || 'Website',
+      customField: contact.customField || {},
+    });
+    return result?.contact?.id || null;
+  } catch (err) {
+    console.error('GHL createContact error:', err);
+    return null;
+  }
 }
 
 export async function createGHLOpportunity(opportunity: GHLOpportunity) {
@@ -49,11 +55,67 @@ export async function createGHLOpportunity(opportunity: GHLOpportunity) {
     title: opportunity.title,
     contactId: opportunity.contactId,
     pipelineId: opportunity.pipelineId || GHL_PIPELINE_ID,
-    pipelineStageId: opportunity.pipelineStageId || GHL_STAGE_ID,
+    pipelineStageId: opportunity.pipelineStageId || opportunity.stageId || GHL_STAGE_ID,
     monetaryValue: opportunity.monetaryValue || 0,
     status: opportunity.status || 'open',
     source: opportunity.source || 'Website',
   });
+}
+
+export function buildBookingContactData(data: {
+  name: string;
+  phone: string;
+  email: string;
+  vehicleType: string;
+  service: string;
+  preferredDate?: string;
+  preferredTime?: string;
+}): GHLContact {
+  const nameParts = data.name.trim().split(' ');
+  const firstName = nameParts[0];
+  const lastName = nameParts.slice(1).join(' ');
+
+  return {
+    firstName,
+    lastName,
+    email: data.email,
+    phone: data.phone,
+    tags: ['booking', 'website'],
+    source: 'Website Booking',
+    customField: {
+      service: data.service,
+      vehicle_type: data.vehicleType,
+      preferred_date: data.preferredDate || '',
+      preferred_time: data.preferredTime || '',
+    },
+  };
+}
+
+export function buildQuoteContactData(data: {
+  name: string;
+  phone: string;
+  email: string;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+  servicesInterested?: string[];
+}): GHLContact {
+  const nameParts = data.name.trim().split(' ');
+  const firstName = nameParts[0];
+  const lastName = nameParts.slice(1).join(' ');
+
+  return {
+    firstName,
+    lastName,
+    email: data.email,
+    phone: data.phone,
+    tags: ['quote', 'website'],
+    source: 'Website Quote',
+    customField: {
+      vehicle: [data.vehicleYear, data.vehicleMake, data.vehicleModel].filter(Boolean).join(' '),
+      services_interested: data.servicesInterested?.join(', ') || '',
+    },
+  };
 }
 
 export async function createLeadFromBooking(data: {
@@ -70,7 +132,7 @@ export async function createLeadFromBooking(data: {
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(' ');
 
-    const contactResult = await createGHLContact({
+    const contactId = await createGHLContact({
       firstName,
       lastName,
       email: data.email,
@@ -85,10 +147,10 @@ export async function createLeadFromBooking(data: {
       },
     });
 
-    if (contactResult?.contact?.id) {
+    if (contactId) {
       await createGHLOpportunity({
         title: `${data.service} - ${data.name}`,
-        contactId: contactResult.contact.id,
+        contactId,
         pipelineId: GHL_PIPELINE_ID,
         pipelineStageId: GHL_STAGE_ID,
         monetaryValue: 0,
@@ -96,7 +158,7 @@ export async function createLeadFromBooking(data: {
       });
     }
 
-    return contactResult;
+    return contactId;
   } catch (err) {
     console.error('GHL lead creation error:', err);
     throw err;

@@ -59,19 +59,18 @@ export function useBookings(): UseBookingsReturn {
     setError(null);
 
     try {
-      // 1. Save to database
       await submitBooking({
         name: data.name,
         phone: data.phone,
         email: data.email,
         vehicle_type: data.vehicleType,
         service: data.service,
-        preferred_date: data.preferredDate,
-        preferred_time: data.preferredTime,
+        date: data.preferredDate || '',
+        time: data.preferredTime || '',
+        vehicleType: data.vehicleType,
         notes: data.notes,
       });
 
-      // 2. Create CRM contact + opportunity
       const contactData = buildBookingContactData({
         name: data.name,
         phone: data.phone,
@@ -95,7 +94,6 @@ export function useBookings(): UseBookingsReturn {
         });
       }
 
-      // 3. Send email notifications
       await sendBookingNotification({
         name: data.name,
         phone: data.phone,

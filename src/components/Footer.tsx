@@ -1,4 +1,4 @@
-import { Phone, Mail, MapPin, Clock, Instagram, Facebook, Circle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Instagram, Facebook, Youtube } from 'lucide-react';
 import { PageType } from '../types';
 
 interface FooterProps {
