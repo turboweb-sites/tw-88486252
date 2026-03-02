@@ -18,16 +18,18 @@ export default function CTAButton({
     lg: 'px-8 py-4 text-base',
   };
 
-  const variantClasses = {
+  const variantClasses: Record<string, string> = {
     primary:
       'bg-primary-500 text-dark-900 hover:bg-primary-400 shadow-lg shadow-primary-500/20 font-semibold',
     secondary:
       'bg-dark-500 text-white hover:bg-dark-400 border border-white/10 font-medium',
     outline:
       'bg-transparent text-primary-500 border border-primary-500/30 hover:bg-primary-500/10 font-medium',
+    call:
+      'bg-green-600 text-white hover:bg-green-500 shadow-lg shadow-green-600/20 font-semibold',
   };
 
-  const baseClasses = `inline-flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${sizeClasses[size]} ${variantClasses[variant]} ${
+  const baseClasses = `inline-flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${sizeClasses[size]} ${variantClasses[variant] || variantClasses.primary} ${
     disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
   } ${className}`;
 

@@ -40,7 +40,6 @@ export default function QuoteForm() {
     setError('');
 
     try {
-      // 1. Submit to Supabase
       await submitQuote({
         name: formData.name,
         phone: formData.phone,
@@ -53,7 +52,6 @@ export default function QuoteForm() {
         message: formData.message || undefined,
       });
 
-      // 2. Create CRM contact
       const ghlContactData = buildQuoteContactData({
         name: formData.name,
         phone: formData.phone,
@@ -66,7 +64,6 @@ export default function QuoteForm() {
 
       await createGHLContact(ghlContactData);
 
-      // 3. Send email notifications
       await sendQuoteNotification({
         name: formData.name,
         phone: formData.phone,
@@ -96,7 +93,7 @@ export default function QuoteForm() {
           message: '',
         });
       }, 5000);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Quote submission error:', err);
       setError('Something went wrong. Please try again or call us directly.');
     } finally {
