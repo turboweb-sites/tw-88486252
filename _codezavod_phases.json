@@ -1,0 +1,17 @@
+{
+  "phases": [
+    {
+      "id": 1,
+      "title": "Полный рабочий сайт с функционалом",
+      "description": "Создание всех 5 страниц (Home, Services, Pricing, Gallery, Contact) на WordPress с premium dark-theme дизайном, интеграцией форм бронирования и запроса цен, Google Reviews виджетом, Before/After слайдерами, Google Maps, мобильной адаптацией, базовым SEO (мета-теги, keywords), Schema markup для Local Business, SSL конфигурацией и оптимизацией скорости загрузки",
+      "status": "done"
+    },
+    {
+      "id": 2,
+      "title": "Интеграции и продвинутая оптимизация",
+      "description": "Настройка CRM интеграции (GoHighLevel), email уведомлений при новых лидах, интерактивного календаря онлайн-бронирования, подключение Google Business Profile, финальная оптимизация PageSpeed до 90+, расширенная Local SEO оптимизация и тестирование всех форм и интеграций",
+      "status": "done"
+    }
+  ],
+  "specSummary": "Premium сайт для auto detailing компании в Майами с 5 страницами, системой онлайн-бронирования, CRM интеграцией и Local SEO оптимизацией"
+}
